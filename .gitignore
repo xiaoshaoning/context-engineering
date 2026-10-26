@@ -3,3 +3,6 @@ article/build/
 eval/runs/
 __pycache__/
 .pytest_cache/
+
+# scratch
+s.json

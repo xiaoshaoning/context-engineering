@@ -23,37 +23,50 @@ REPORT.md    method, numbers, threats to validity
 
 ## Using the skill
 
-The canonical copy is [`skill/SKILL.md`](skill/SKILL.md); install it by copying the directory:
+One `SKILL.md`, three harnesses. The repo copy is canonical; installing is a file copy, not a
+build — every one of these tools reads `SKILL.md` from disk and loads the body on demand.
 
 ```bash
-mkdir -p ~/.pi/agent/skills && cp -r skill ~/.pi/agent/skills/context-engineering
+cd skill && ./install.sh          # every harness found on PATH
+./install.sh --dir ~/.foo/skills  # somewhere else
 ```
 
-Pi reads it from disk at startup — no build, no version. After editing, `/reload` in a live
-session (or just start a new one).
+| harness | location | pick-up |
+|---|---|---|
+| Codex | `~/.agents/skills/context-engineering/` | `/skills`, `$context-engineering`, or automatic |
+| Claude Code | `~/.claude/skills/context-engineering/` | `/context-engineering`, or automatic |
+| pi | `~/.pi/agent/skills/context-engineering/` (`~/.agents/skills` also works) | automatic, or `/skill:context-engineering` |
+| any Agent Skills tool | `~/.agents/skills/` | per tool |
 
-Pi advertises the skill's name and
-description at startup and loads the body only when the task matches — which, measured, is
-0/8 times on a plain "fix this bug". So ask for it by name when you need it:
+Verified against each tool's limits: name 19 chars (kebab), description 422 chars (Codex caps
+500, Claude caps description + `when_to_use` at 1536), and the description states when *not*
+to trigger, which Codex asks for. `install.sh` skips pi's own directory when
+`~/.agents/skills` is already in place: two copies of one name is a duplicate, not a second
+install.
+
+pi advertises the name and description at startup and loads the body only when the task
+matches — which, measured, is 0/8 times on a plain "fix this bug". So ask for it by name when
+you need it:
 
 ```
 /skill:context-engineering continue from state.md and make the suite green
 /skill:context-engineering the agent keeps retrying the same failed edit; what do I reset?
 ```
 
-Headless / scripted:
+Headless / scripted (pi):
 
 ```bash
-pi -p --skill ~/.pi/agent/skills/context-engineering "…"          # advertised, model may read it
-pi -p --no-skills --skill ~/.pi/agent/skills/context-engineering "…"   # only this skill
-pi -p "/skill:context-engineering …"                               # body forced into the prompt
+pi -p --skill ~/.agents/skills/context-engineering "…"                 # advertised, model may read it
+pi -p --no-skills --skill ~/.agents/skills/context-engineering "…"     # only this skill
+pi -p "/skill:context-engineering …"                                   # body forced into the prompt
 ```
 
 Use it when resuming from a handover note, when the context window is filling, when the
 agent repeats an action that already failed, or when a notes/memory file contradicts the
 code. Skip it for a one-shot task in a fresh session — it is token tax there.
 
-Edit the skill, then `/reload` in a live session; a new session picks it up by itself.
+Edit `skill/SKILL.md`, re-run `install.sh`, then `/reload` in a live pi session; Claude Code
+and Codex pick it up on their next session.
 
 ## Rebuilding the PDF
 

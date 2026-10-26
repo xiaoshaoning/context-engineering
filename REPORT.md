@@ -151,7 +151,7 @@ under `eval/runs/` (git-ignored). Grader and fixtures: `eval/run_experiment.py`,
 article/                 markdown source, build pipeline, svg/, 32-page PDF
 article/build/           ignored: downloaded slides, traced figures, .tex, logs
 eval/                    fixtures, runner, results/
-~/.pi/agent/skills/context-engineering/SKILL.md    the skill itself
+skill/                   the skill (install.sh copies it into Claude Code, Codex, pi)
 ```
 
 Not in git: `article/build/` (downloads, traced figures, `.tex`, logs) and `eval/runs/`.
