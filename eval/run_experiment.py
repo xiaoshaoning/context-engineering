@@ -36,7 +36,7 @@ PROBE = {
     "stuck": "from pkg.parse import parse; print(repr(parse('a b')))",
 }
 EXPECT = {"trap": "2.68 1.01 2.67", "bigrepo": "True True", "stuck": "'['a', 'b']'", "bigctx": "2.68 1.01 2.67"}
-TEMPLATE = ROOT / SCENARIO
+TEMPLATE = ROOT / "fixtures" / SCENARIO
 TIMEOUT = 900
 TESTS = {p.name: hashlib.sha256(p.read_bytes()).hexdigest()
          for p in (TEMPLATE / "tests").glob("*.py")}
@@ -122,7 +122,7 @@ for i in range(START, START + REPS):
     for cond in CONDS:
         r = run_one(cond, i)
         rows.append(r)
-        OUT = ROOT / f"results-{SCENARIO}-{MODEL.replace('/', '_')}.json"
+        OUT = ROOT / "results" / f"{SCENARIO}-{MODEL.replace('/', '_')}.json"
         prev = json.loads(OUT.read_text(encoding="utf-8")) if OUT.exists() else []
         prev = [q for q in prev if not (q["cond"] == r["cond"] and q["rep"] == r["rep"])] + [r]
         OUT.write_text(json.dumps(sorted(prev, key=lambda q: (q["cond"], q["rep"])), indent=1),
@@ -132,7 +132,7 @@ for i in range(START, START + REPS):
               f"log={r['mentions_log']} tools={r['tool_calls']} "
               f"tok={r['tokens_in']+r['tokens_out']} {r['seconds']}s {r['err']}", flush=True)
 
-out = ROOT / f"results-{SCENARIO}-{MODEL.replace('/', '_')}.json"
+out = ROOT / "results" / f"{SCENARIO}-{MODEL.replace('/', '_')}.json"
 old = json.loads(out.read_text(encoding="utf-8")) if out.exists() else []
 rows = [r for r in old if not (r["cond"] in CONDS and START <= r["rep"] < START + REPS)] + rows
 out.write_text(json.dumps(sorted(rows, key=lambda r: (r["cond"], r["rep"])), indent=1),

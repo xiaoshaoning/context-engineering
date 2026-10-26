@@ -1,9 +1,5 @@
-# regenerable / large
-ctx/img/
-ctx/figs/
-ctx/out.txt
-skilltest/runs/
+# generated, never committed
+article/build/
+eval/runs/
 __pycache__/
 .pytest_cache/
-*.aux
-*.log

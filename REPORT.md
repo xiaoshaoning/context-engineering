@@ -18,22 +18,22 @@ Source: <https://www.dbreunig.com/2026/10/24/the-state-of-context-engineering.ht
 The site publishes its own Markdown (`…-engineering.md`), which preserves the interleaving
 of slides and transcript, so that was the input rather than scraping HTML.
 
-Pipeline (`ctx/`):
+Pipeline (`article/`):
 
 | step | tool | file |
 |---|---|---|
-| fetch slides (39 × 1920×1080) | curl | `ctx/img/` |
-| trace to vector | `vtracer` (color, stacked, spline, `color_precision=8`, `layer_difference=8`) | `ctx/svg/*.svg` |
-| quality gate | render SVG back at 1920×1080, compare to the JPEG; keep vector only if mean pixel error ≤ 6/255 and file ≤ 1.2 MB | `ctx/build.py` |
-| SVG → PDF for inclusion | `rsvg-convert -f pdf` | `ctx/figs/*.pdf` |
-| Markdown → LaTeX | pandoc | `ctx/state-of-context-engineering.tex` |
-| LaTeX → PDF | xelatex (Constantia, `[H]` float placement, `\setkeys{Gin}` full width) | `ctx/state-of-context-engineering.pdf` |
+| fetch slides (39 × 1920×1080) | curl | `article/build/img/` |
+| trace to vector | `vtracer` (color, stacked, spline, `color_precision=8`, `layer_difference=8`) | `article/svg/*.svg` |
+| quality gate | render SVG back at 1920×1080, compare to the JPEG; keep vector only if mean pixel error ≤ 6/255 and file ≤ 1.2 MB | `article/build.py` |
+| SVG → PDF for inclusion | `rsvg-convert -f pdf` | `article/build/figs/*.pdf` |
+| Markdown → LaTeX | pandoc | `article/build/state-of-context-engineering.tex` |
+| LaTeX → PDF | xelatex (Constantia, `[H]` float placement, `\setkeys{Gin}` full width) | `article/state-of-context-engineering.pdf` |
 
 Result: **32 pages, 4.2 MB, 36 of 39 slides as real vector paths**, three kept raster
 because tracing them badly (`008` Pokémon box art, `031` multi-run line chart, `034` IT Crowd
 photo — 2–11 MB of colour speckle, mean error 3–15/255).
 
-Reproduce: `cd ctx && bash build.sh figs`.
+Reproduce: `cd article && bash build.sh`.
 
 ---
 
@@ -128,24 +128,25 @@ bigctx, baseline vs forced:
 ## 4. Reproduce
 
 ```bash
-cd skilltest
+cd eval
 python run_experiment.py trap 3                    # short task: no difference
-APPEND_SYSTEM=$PWD/bigctx/history.txt \
+APPEND_SYSTEM=$PWD/fixtures/bigctx/history.txt \
   CONDS=baseline,forced REP_START=1 \
   python run_experiment.py bigctx 8                # the effect
 ```
 
-Raw rows: `skilltest/results-*.json` (46 runs total). Each run is a fresh copy of the fixture
-under `skilltest/runs/` (git-ignored). Grader and fixtures: `skilltest/run_experiment.py`,
-`skilltest/{trap,bigrepo,stuck,bigctx}/`.
+Raw rows: `eval/results/*.json` (46 runs total). Each run is a fresh copy of the fixture
+under `eval/runs/` (git-ignored). Grader and fixtures: `eval/run_experiment.py`,
+`eval/fixtures/{trap,bigrepo,stuck,bigctx}/`.
 
 ## 5. Files
 
 ```
-ctx/                     article → PDF pipeline, svg/, figs/, 32-page PDF
-skilltest/               fixtures, experiment runner, results, FINDINGS.md
+article/                 markdown source, build pipeline, svg/, 32-page PDF
+article/build/           ignored: downloaded slides, traced figures, .tex, logs
+eval/                    fixtures, runner, results/
 ~/.pi/agent/skills/context-engineering/SKILL.md    the skill itself
 ```
 
-Not in git: `ctx/img/` (re-downloadable), `ctx/figs/`, `ctx/out/`, `skilltest/runs/`,
-LaTeX logs, caches. Everything else regenerates with the two commands above.
+Not in git: `article/build/` (downloads, traced figures, `.tex`, logs) and `eval/runs/`.
+Everything else regenerates with the two commands above.

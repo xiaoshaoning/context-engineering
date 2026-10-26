@@ -12,8 +12,9 @@ actually changes agent behaviour. Results and method: [REPORT.md](REPORT.md).
 ## What's here
 
 ```
-ctx/         article -> LaTeX/PDF pipeline; 32-page PDF, 39 slides, 36 as real SVG
-skilltest/   fixtures with a poisoned handover note + headless runner + raw results
+article/     source markdown + PDF/LaTeX pipeline; 32-page PDF, 39 slides, 36 as real SVG
+  build/     generated (git-ignored): traced figures, downloaded slides, .tex, logs
+eval/        fixtures with a poisoned handover note, headless runner, results/
 REPORT.md    method, numbers, threats to validity
 ```
 
@@ -45,30 +46,31 @@ Edit the skill, then `/reload` in a live session; a new session picks it up by i
 ## Rebuilding the PDF
 
 ```bash
-cd ctx
-bash build.sh figs     # re-trace slides (vtracer) + rebuild PDF
-bash build.sh          # reuse figs/, rebuild PDF only
+cd article
+bash build.sh          # rebuild the PDF (traces only missing slides)
+python build.py --force   # re-trace every slide from the JPEGs
 ```
 
-Needs `vtracer`, `Pillow`, `numpy`, `rsvg-convert`, pandoc, xelatex. The trace quality gate in
-`ctx/build.py` keeps a slide as SVG only if re-rendering it lands within 6/255 mean pixel
-error of the JPEG and under 1.2 MB; three photographic slides fail that and stay raster.
+Needs `vtracer`, `Pillow`, `numpy`, `rsvg-convert`, pandoc, xelatex. `build.py` downloads the
+slides to `build/img/`, traces them, and keeps a slide as vector PDF only if re-rendering it
+lands within 6/255 mean pixel error of the JPEG and under 1.2 MB; three photographic slides
+fail that and stay raster. Decisions are cached in `build/figs/`, so later builds are seconds.
 
-Output: `ctx/state-of-context-engineering.pdf`, vectors in `ctx/svg/`.
+Output: `article/state-of-context-engineering.pdf`, vectors in `article/svg/`.
 
 ## Running the evaluation
 
 ```bash
-cd skilltest
+cd eval
 python run_experiment.py trap 3                     # short task: no difference
-APPEND_SYSTEM=$PWD/bigctx/history.txt \
+APPEND_SYSTEM=$PWD/fixtures/bigctx/history.txt \
   CONDS=baseline,forced REP_START=1 \
   python run_experiment.py bigctx 8                 # the effect
 ```
 
 Args: `<scenario> <reps> [model]`. Scenarios: `trap`, `bigrepo`, `stuck`, `bigctx`.
 Conditions on any run: `CONDS=baseline,organic,forced`. Results append to
-`results-<scenario>-<model>.json`; each run works in a throwaway copy under `runs/`.
+`results/<scenario>-<model>.json`; each run works in a throwaway copy under `runs/`.
 
 Grading is mechanical — suite green, test files byte-identical, behaviour probe correct. No
 LLM judge, so a run that "fixes" the test to match the bug counts as a failure.
