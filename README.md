@@ -1,8 +1,11 @@
 # context-engineering
 
-Drew Breunig's AGNTCon talk *The State of Context Engineering* as an offline PDF, a pi skill
-that condenses it into operating rules, and the A/B test that measures whether the skill
-actually changes agent behaviour. Results and method: [REPORT.md](REPORT.md).
+Source talk: **<https://www.dbreunig.com/2026/10/24/the-state-of-context-engineering.html>**
+(*The State of Context Engineering*, Drew Breunig, AGNTCon, October 2026).
+
+Drew Breunig's talk as an offline PDF, a pi skill that condenses it into operating rules,
+and the A/B test that measures whether the skill actually changes agent behaviour.
+Results and method: [REPORT.md](REPORT.md).
 
 **Short version:** the skill does nothing on short tasks and a lot on long ones. With a
 135k-token poisoned history, 2/8 vs 7/8 success, one-sided Fisher p = 0.020.
@@ -68,6 +71,12 @@ APPEND_SYSTEM=$PWD/fixtures/bigctx/history.txt \
   python run_experiment.py bigctx 8                 # the effect
 ```
 
+Grader self-check (no framework, plain asserts):
+
+```bash
+python test_grader.py
+```
+
 Args: `<scenario> <reps> [model]`. Scenarios: `trap`, `bigrepo`, `stuck`, `bigctx`.
 Conditions on any run: `CONDS=baseline,organic,forced`. Results append to
 `results/<scenario>-<model>.json`; each run works in a throwaway copy under `runs/`.
@@ -75,8 +84,9 @@ Conditions on any run: `CONDS=baseline,organic,forced`. Results append to
 Grading is mechanical — suite green, test files byte-identical, behaviour probe correct. No
 LLM judge, so a run that "fixes" the test to match the bug counts as a failure.
 
-## Source
+## Source and rights
 
-Original talk: <https://www.dbreunig.com/2026/10/24/the-state-of-context-engineering.html>
-(Drew Breunig, Cmpnd, October 2026). Slides and text belong to him; this repo is a reading
-copy, not a redistribution license.
+Slides and transcript belong to Drew Breunig (Cmpnd) — the URL is at the top of this README.
+This repo is a reading copy plus my own tooling, not a redistribution license: the code
+(`article/*.py`, `article/*.sh`, `eval/`) is MIT, see [LICENSE](LICENSE); the article text
+and slide images keep their author's rights.

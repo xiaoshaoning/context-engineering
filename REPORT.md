@@ -120,6 +120,10 @@ bigctx, baseline vs forced:
 - `stuck` grading is lexical (does the answer name the contradiction); several runs instead
   made both tests pass with an object whose `__eq__` matches both a string and a list. The
   fixture measures norm-reporting more than context engineering; treat that row as anecdotal.
+- Known artefact: the first grader version used a broader "claims green" regex that flagged
+  honest answers like "2 tests pass and 2 contradict". One of the six `stuck` rows (organic 1)
+  was misgraded because of it. The rules are now pinned by `eval/test_grader.py`, but the
+  `stuck` counts above were produced by the old code — re-run that scenario before quoting it.
 - The 135k transcript is synthetic and repetitive. Real long histories are messier and
   probably *harder*, which would make the skill's effect larger, not smaller.
 
@@ -134,6 +138,8 @@ APPEND_SYSTEM=$PWD/fixtures/bigctx/history.txt \
   CONDS=baseline,forced REP_START=1 \
   python run_experiment.py bigctx 8                # the effect
 ```
+
+Grader self-check: `python eval/test_grader.py` (no framework, plain asserts).
 
 Raw rows: `eval/results/*.json` (46 runs total). Each run is a fresh copy of the fixture
 under `eval/runs/` (git-ignored). Grader and fixtures: `eval/run_experiment.py`,
