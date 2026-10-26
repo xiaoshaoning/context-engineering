@@ -19,11 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
----
-
-Scope note: this license covers the tooling in this repository (`article/build.py`,
-`article/build.sh`, `article/header.tex`, `eval/`). The article text in `article/post.md`,
-the rendered PDF, and the slide images in `article/svg/` are the work of Drew Breunig
-(https://www.dbreunig.com/2026/10/24/the-state-of-context-engineering.html) and remain
-under his rights; they are included here as a reading copy.

@@ -89,4 +89,4 @@ LLM judge, so a run that "fixes" the test to match the bug counts as a failure.
 Slides and transcript belong to Drew Breunig (Cmpnd) — the URL is at the top of this README.
 This repo is a reading copy plus my own tooling, not a redistribution license: the code
 (`article/*.py`, `article/*.sh`, `eval/`) is MIT, see [LICENSE](LICENSE); the article text
-and slide images keep their author's rights.
+and slide images keep their author's rights and are not covered by that license.
