@@ -23,7 +23,16 @@ REPORT.md    method, numbers, threats to validity
 
 ## Using the skill
 
-Installed at `~/.pi/agent/skills/context-engineering/SKILL.md`. Pi advertises its name and
+The canonical copy is [`skill/SKILL.md`](skill/SKILL.md); install it by copying the directory:
+
+```bash
+mkdir -p ~/.pi/agent/skills && cp -r skill ~/.pi/agent/skills/context-engineering
+```
+
+Pi reads it from disk at startup — no build, no version. After editing, `/reload` in a live
+session (or just start a new one).
+
+Pi advertises the skill's name and
 description at startup and loads the body only when the task matches — which, measured, is
 0/8 times on a plain "fix this bug". So ask for it by name when you need it:
 
